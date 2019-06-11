@@ -44,7 +44,7 @@ public class DumpTruckProblem {
 			time += timeIncrement;
 			DumpTruckEvent nextEvent = events.pop();
 			
-			System.out.println("\tT:"+time+"(+"+timeIncrement+"), E:"+nextEvent);
+			//System.out.println("\tT:"+time+"(+"+timeIncrement+"), E:"+nextEvent);
 		
 			// Set busy time
 			busyLoader += loadingTrucks.size() * timeIncrement;
@@ -53,15 +53,15 @@ public class DumpTruckProblem {
 			switch (nextEvent.getType()) {
 			
 				// ARRIVE LOADER EVENT
-				case ArriveLodaer:
+				case ArriveLoader:
 					if (loadingTrucks.size() == numLoaders) {
 						// Loader(s) full
-						loaderQueue.add(nextEvent.getTruckNum());		System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader queue");
+						loaderQueue.add(nextEvent.getTruckNum());		//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader queue");
 					} else {
 						// Loader(s) available
 						loadingTrucks.add(nextEvent.getTruckNum());
 						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndLoader, time + loadingTimes[loadingIdx++], nextEvent.getTruckNum());
-						events.add(newEvent);	System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader : " + newEvent);
+						events.add(newEvent);	//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader : " + newEvent);
 					}
 					break;
 				
@@ -71,12 +71,12 @@ public class DumpTruckProblem {
 					
 					if (scalingTrucks.size() == numScales) {
 						// Scale full
-						scaleQueue.add(nextEvent.getTruckNum());		System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale queue");
+						scaleQueue.add(nextEvent.getTruckNum());		//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale queue");
 					} else {
 						// Scale available
 						scalingTrucks.add(nextEvent.getTruckNum());
 						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndScale, time + scaleTimes[scaleIdx++], nextEvent.getTruckNum());
-						events.add(newEvent);	System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale : " + newEvent);
+						events.add(newEvent);	//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale : " + newEvent);
 					}
 					
 					// Pull another truck into Loader
@@ -84,7 +84,7 @@ public class DumpTruckProblem {
 						int toLoaderTruck = loaderQueue.remove(0);
 						loadingTrucks.add(toLoaderTruck);
 						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndLoader, time + loadingTimes[loadingIdx++], toLoaderTruck);
-						events.add(newEvent);	System.out.println("\tAdding DT:"+toLoaderTruck+" to loader : " + newEvent);
+						events.add(newEvent);	//System.out.println("\tAdding DT:"+toLoaderTruck+" to loader : " + newEvent);
 					}
 					break;
 					
@@ -92,15 +92,15 @@ public class DumpTruckProblem {
 				case EndScale:
 					scalingTrucks.remove(new Integer(nextEvent.getTruckNum()));
 					
-					newEvent = new DumpTruckEvent(DumpTruckEvent.Type.ArriveLodaer, time + travelTimes[travelIdx++], nextEvent.getTruckNum());
-					events.add(newEvent);	System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to travel : " + newEvent);
+					newEvent = new DumpTruckEvent(DumpTruckEvent.Type.ArriveLoader, time + travelTimes[travelIdx++], nextEvent.getTruckNum());
+					events.add(newEvent);	//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to travel : " + newEvent);
 					
 					// Pull another truck into scale
 					if (scaleQueue.size() > 0) {
 						int toScaleTruck = scaleQueue.remove(0);
 						scalingTrucks.add(toScaleTruck);
 						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndScale, time + scaleTimes[scaleIdx++], toScaleTruck);
-						events.add(newEvent);	System.out.println("\tAdding DT:"+toScaleTruck+" to scale : " + newEvent);
+						events.add(newEvent);	//System.out.println("\tAdding DT:"+toScaleTruck+" to scale : " + newEvent);
 					}
 					
 					break;

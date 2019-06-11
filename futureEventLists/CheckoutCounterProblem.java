@@ -59,7 +59,7 @@ public class CheckoutCounterProblem {
 			PrintFEL();
 			
 			if (arrivalIndex == interArrivalTimes.length || serviceIndex == serviceTimes.length) {
-				System.out.println("arrivalIndex="+arrivalIndex+", serviceIndex="+serviceIndex);
+				//System.out.println("arrivalIndex="+arrivalIndex+", serviceIndex="+serviceIndex);
 				//break;
 			}
 						

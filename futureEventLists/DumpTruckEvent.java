@@ -3,7 +3,7 @@ package futureEventLists;
 public class DumpTruckEvent implements Comparable<DumpTruckEvent>  {
 
 	public static enum Type {
-		ArriveLodaer,
+		ArriveLoader,
 		EndLoader,
 		EndScale
 	}
@@ -38,7 +38,7 @@ public class DumpTruckEvent implements Comparable<DumpTruckEvent>  {
 		String output = "(";
 		
 		switch (this.type) {
-			case ArriveLodaer:
+			case ArriveLoader:
 				output += "ALQ, "; break; 
 			case EndLoader:
 				output += "EL, "; break; 
