@@ -39,76 +39,80 @@ public class DumpTruckProblem {
 		PrintFEL();
 		
 		// Loop
-		while (time <= endTime) {
-			timeIncrement = events.nextTime() - time;
-			time += timeIncrement;
-			DumpTruckEvent nextEvent = events.pop();
-			
-			//System.out.println("\tT:"+time+"(+"+timeIncrement+"), E:"+nextEvent);
-		
-			// Set busy time
-			busyLoader += loadingTrucks.size() * timeIncrement;
-			busyScale += scalingTrucks.size() * timeIncrement;
-			
-			switch (nextEvent.getType()) {
-			
-				// ARRIVE LOADER EVENT
-				case ArriveLoader:
-					if (loadingTrucks.size() == numLoaders) {
-						// Loader(s) full
-						loaderQueue.add(nextEvent.getTruckNum());		//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader queue");
-					} else {
-						// Loader(s) available
-						loadingTrucks.add(nextEvent.getTruckNum());
-						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndLoader, time + loadingTimes[loadingIdx++], nextEvent.getTruckNum());
-						events.add(newEvent);	//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader : " + newEvent);
-					}
-					break;
+		try {
+			while (time <= endTime) {
+				timeIncrement = events.nextTime() - time;
+				time += timeIncrement;
+				DumpTruckEvent nextEvent = events.pop();
 				
-				// END LOADER EVENT
-				case EndLoader:
-					loadingTrucks.remove(new Integer(nextEvent.getTruckNum()));
-					
-					if (scalingTrucks.size() == numScales) {
-						// Scale full
-						scaleQueue.add(nextEvent.getTruckNum());		//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale queue");
-					} else {
-						// Scale available
-						scalingTrucks.add(nextEvent.getTruckNum());
-						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndScale, time + scaleTimes[scaleIdx++], nextEvent.getTruckNum());
-						events.add(newEvent);	//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale : " + newEvent);
-					}
-					
-					// Pull another truck into Loader
-					if (loaderQueue.size() > 0) {
-						int toLoaderTruck = loaderQueue.remove(0);
-						loadingTrucks.add(toLoaderTruck);
-						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndLoader, time + loadingTimes[loadingIdx++], toLoaderTruck);
-						events.add(newEvent);	//System.out.println("\tAdding DT:"+toLoaderTruck+" to loader : " + newEvent);
-					}
-					break;
-					
-				// END SCALE EVENT
-				case EndScale:
-					scalingTrucks.remove(new Integer(nextEvent.getTruckNum()));
-					
-					newEvent = new DumpTruckEvent(DumpTruckEvent.Type.ArriveLoader, time + travelTimes[travelIdx++], nextEvent.getTruckNum());
-					events.add(newEvent);	//System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to travel : " + newEvent);
-					
-					// Pull another truck into scale
-					if (scaleQueue.size() > 0) {
-						int toScaleTruck = scaleQueue.remove(0);
-						scalingTrucks.add(toScaleTruck);
-						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndScale, time + scaleTimes[scaleIdx++], toScaleTruck);
-						events.add(newEvent);	//System.out.println("\tAdding DT:"+toScaleTruck+" to scale : " + newEvent);
-					}
-					
-					break;
-			}
+				//System.out.println("\tT:"+time+"(+"+timeIncrement+"), E:"+nextEvent);
 			
-			PrintFEL();
-			
-			// TODO: prevent ArrayIndexOutOfBoundsException
+				// Set busy time
+				busyLoader += loadingTrucks.size() * timeIncrement;
+				busyScale += scalingTrucks.size() * timeIncrement;
+				
+				switch (nextEvent.getType()) {
+				
+					// ARRIVE LOADER EVENT
+					case ArriveLoader:
+						if (loadingTrucks.size() == numLoaders) {
+							// Loader(s) full
+							loaderQueue.add(nextEvent.getTruckNum());		System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader queue");
+						} else {
+							// Loader(s) available
+							loadingTrucks.add(nextEvent.getTruckNum());
+							newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndLoader, time + loadingTimes[loadingIdx++], nextEvent.getTruckNum());
+							events.add(newEvent);	System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to loader : " + newEvent);
+						}
+						break;
+					
+					// END LOADER EVENT
+					case EndLoader:
+						loadingTrucks.remove(new Integer(nextEvent.getTruckNum()));
+						
+						if (scalingTrucks.size() == numScales) {
+							// Scale full
+							scaleQueue.add(nextEvent.getTruckNum());		System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale queue");
+						} else {
+							// Scale available
+							scalingTrucks.add(nextEvent.getTruckNum());
+							newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndScale, time + scaleTimes[scaleIdx++], nextEvent.getTruckNum());
+							events.add(newEvent);	System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to scale : " + newEvent);
+						}
+						
+						// Pull another truck into Loader
+						if (loaderQueue.size() > 0) {
+							int toLoaderTruck = loaderQueue.remove(0);
+							loadingTrucks.add(toLoaderTruck);
+							newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndLoader, time + loadingTimes[loadingIdx++], toLoaderTruck);
+							events.add(newEvent);	System.out.println("\tAdding DT:"+toLoaderTruck+" to loader : " + newEvent);
+						}
+						break;
+						
+					// END SCALE EVENT
+					case EndScale:
+						scalingTrucks.remove(new Integer(nextEvent.getTruckNum()));
+						
+						newEvent = new DumpTruckEvent(DumpTruckEvent.Type.ArriveLoader, time + travelTimes[travelIdx++], nextEvent.getTruckNum());
+						events.add(newEvent);	System.out.println("\tAdding DT:"+nextEvent.getTruckNum()+" to travel : " + newEvent);
+						
+						// Pull another truck into scale
+						if (scaleQueue.size() > 0) {
+							int toScaleTruck = scaleQueue.remove(0);
+							scalingTrucks.add(toScaleTruck);
+							newEvent = new DumpTruckEvent(DumpTruckEvent.Type.EndScale, time + scaleTimes[scaleIdx++], toScaleTruck);
+							events.add(newEvent);	System.out.println("\tAdding DT:"+toScaleTruck+" to scale : " + newEvent);
+						}
+						
+						break;
+				}
+				
+				PrintFEL();
+				
+				// TODO: prevent ArrayIndexOutOfBoundsException
+			}	
+		} catch (Exception e) {
+			System.out.println("Error: " + e.getMessage());
 		}
 		
 	}
@@ -116,12 +120,12 @@ public class DumpTruckProblem {
 	static void PrintHeader() {
 		String output = "";
 		output += String.format("%-5s", "T");
-		output += String.format("%-5s", "LQ");
-		output += String.format("%-5s", "L");
-		output += String.format("%-5s", "WQ");
-		output += String.format("%-5s", "W");
-		output += String.format("%-13s", "LoadQ");
-		output += String.format("%-13s", "ScaleQ");
+		output += String.format("%-13s", "LQ");
+		output += String.format("%-10s", "L");
+		output += String.format("%-13s", "WQ");
+		output += String.format("%-10s", "W");
+		//output += String.format("%-13s", "LoadQ");
+		//output += String.format("%-13s", "ScaleQ");
 		output += String.format("%-20s", "FEL");
 		output += String.format("%-5s", "BL");
 		output += String.format("%-5s", "BS");
@@ -132,12 +136,12 @@ public class DumpTruckProblem {
 		String output = "";
 		String[] eventsString = events.toStringList();
 		output += String.format("%-5d", time);
-		output += String.format("%-5d", loaderQueue.size());
-		output += String.format("%-5d", loadingTrucks.size());
-		output += String.format("%-5d", scaleQueue.size());
-		output += String.format("%-5d", scalingTrucks.size());
 		output += String.format("%-13s", Arrays.toString(loaderQueue.toArray()));
+		output += String.format("%-10s", Arrays.toString(loadingTrucks.toArray()));
 		output += String.format("%-13s", Arrays.toString(scaleQueue.toArray()));
+		output += String.format("%-10s", Arrays.toString(scalingTrucks.toArray()));
+		//output += String.format("%-13s", Arrays.toString(loaderQueue.toArray()));
+		//output += String.format("%-13s", Arrays.toString(scaleQueue.toArray()));
 		output += String.format("%-20s", eventsString[0]);
 		output += String.format("%-5d", busyLoader);
 		output += String.format("%-5d", busyScale);
